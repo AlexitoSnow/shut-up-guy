@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+*.iml
+*.iws
+.idea_modules/
+.vs/
+
+# Sistema operativo
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Archivos específicos del proyecto
+shut-up-guy.iml
+
+# Archivos de entorno virtual
+venv/
+ENV/
+
+# Archivos de caché de pytest
+.pytest_cache/
+
+# Archivos de cobertura
+.coverage
+htmlcov/
+
+# Logs
+*.log

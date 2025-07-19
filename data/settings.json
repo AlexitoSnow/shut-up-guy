@@ -1,0 +1,10 @@
+{
+    "volume": 0.5,
+    "difficulty": "normal",
+    "controls": [
+        "standard",
+        "dynamic",
+        "both"
+    ],
+    "select_controls": "standard"
+}
