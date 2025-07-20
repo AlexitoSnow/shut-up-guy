@@ -30,11 +30,15 @@ class GameplayScene(Scene):
 
         self.load_images()
 
-        # Input handlers
-        self.cam_handler = CameraInputHandler()
+        # Input handlers - usar el índice de cámara de las configuraciones
+        camera_index = self.game.settings.camera_index
+        self.cam_handler = CameraInputHandler(camera_index)
         self.character.add(Player([self.char_run_1, self.char_run_2], self.cam_handler))
 
     def init(self):
+        # Mostrar cámaras disponibles al inicializar
+        CameraInputHandler.print_available_cameras()
+        print(f"Usando cámara con índice: {self.game.settings.camera_index}")
         self.cam_handler.start()
 
     def handle_events(self, events):

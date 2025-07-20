@@ -8,10 +8,47 @@ import math
 import threading
 
 class CameraInputHandler:
-    def __init__(self, threshold=30):
+    @staticmethod
+    def list_available_cameras():
+        """Lista todas las cámaras disponibles en el sistema"""
+        available_cameras = []
+        for i in range(10):  # Verificar hasta 10 cámaras
+            cap = cv2.VideoCapture(i)
+            if cap.isOpened():
+                available_cameras.append(i)
+                cap.release()
+        return available_cameras
+    
+    @staticmethod
+    def print_available_cameras():
+        """Imprime las cámaras disponibles en el sistema"""
+        cameras = CameraInputHandler.list_available_cameras()
+        print("\nCámaras disponibles:")
+        for cam_index in cameras:
+            print(f"  Cámara {cam_index}")
+        if not cameras:
+            print("  No se encontraron cámaras disponibles")
+        return cameras
+
+    def __init__(self, camera_index=0, threshold=30):
+        print(f"Inicializando CameraInputHandler con cámara {camera_index}")
         self.mp_hands = mp.solutions.hands
         self.hands = self.mp_hands.Hands()
-        self.cap = cv2.VideoCapture(1)
+        self.camera_index = camera_index
+        self.cap = cv2.VideoCapture(self.camera_index)
+        
+        # Verificar si la cámara se abrió correctamente
+        if not self.cap.isOpened():
+            print(f"Error: No se pudo abrir la cámara {camera_index}")
+            # Intentar con la cámara por defecto
+            print("Intentando con la cámara por defecto (índice 0)...")
+            self.camera_index = 0
+            self.cap = cv2.VideoCapture(0)
+            if not self.cap.isOpened():
+                print("Error: No se pudo abrir ninguna cámara")
+        else:
+            print(f"Cámara {camera_index} abierta correctamente")
+            
         self.running = False
         self.thread = None
 
@@ -111,6 +148,10 @@ Extensión del pulgar: {thumb_extension:.3f}
         return True if not self.hand_detected else self.thumb_extended
 
     def stop(self):
+        print(f"Deteniendo CameraInputHandler (cámara {self.camera_index})")
         self.running = False
-        if self.cap:
+        if self.thread and self.thread.is_alive():
+            self.thread.join(timeout=1)  # Esperar hasta 1 segundo
+        if self.cap and self.cap.isOpened():
             self.cap.release()
+            print("Cámara liberada correctamente")
