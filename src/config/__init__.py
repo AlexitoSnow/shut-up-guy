@@ -1,2 +1,2 @@
-from src.config.constants import *
-from src.config.settings import *
+from .constants import *
+from .settings import *

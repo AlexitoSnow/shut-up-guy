@@ -1,8 +1,8 @@
 import pygame
 from pygame.locals import *
 
-from src.config.constants import GROUND, SCREEN_WIDTH
-from src.entity.Projectile import Projectile
+from config.constants import GROUND, SCREEN_WIDTH
+from entity.Projectile import Projectile
 
 
 class Player (pygame.sprite.Sprite):

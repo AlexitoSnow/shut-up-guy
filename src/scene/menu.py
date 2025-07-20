@@ -3,7 +3,7 @@
 # jugar, configuraciones, puntuaciones altas, salir
 import pygame
 
-from src.scene.scene import Scene
+from scene.scene import Scene
 
 
 class MenuScene(Scene):

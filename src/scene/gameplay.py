@@ -6,10 +6,10 @@ from random import choice
 import pygame
 from pygame.locals import QUIT
 
-from src.config import *
-from src.entity import Obstacle, Player, ENEMY, FLY
-from src.scene.scene import Scene
-from src.utils import Timer, CameraInputHandler
+from config import *
+from entity import Obstacle, Player, ENEMY, FLY
+from scene.scene import Scene
+from utils import Timer, CameraInputHandler
 
 
 class GameplayScene(Scene):

@@ -1,3 +1,3 @@
-from src.entity.Player import Player
-from src.entity.Obstacle import *
-from src.entity.Projectile import Projectile
+from .Player import Player
+from .Obstacle import *
+from .Projectile import Projectile

@@ -2,7 +2,7 @@ from os.path import join
 
 import pygame.sprite
 
-from src.config import IMAGES
+from config import IMAGES
 
 
 class Projectile(pygame.sprite.Sprite):

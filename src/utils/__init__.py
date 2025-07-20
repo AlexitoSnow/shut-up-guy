@@ -1,2 +1,2 @@
-from src.utils.timer import Timer
-from src.utils.input_handler import CameraInputHandler
+from .timer import Timer
+from .input_handler import CameraInputHandler

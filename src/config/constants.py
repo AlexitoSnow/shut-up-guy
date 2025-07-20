@@ -15,7 +15,7 @@ FPS = 60
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
-FONTS = join('assets', 'fonts')
-SOUNDS = join('assets', 'sounds')
-IMAGES = join('assets', 'images')
-DATA = 'data'
+FONTS = join('..', 'assets', 'fonts')
+SOUNDS = join('..', 'assets', 'sounds')
+IMAGES = join('..', 'assets', 'images')
+DATA = join('..', 'data')

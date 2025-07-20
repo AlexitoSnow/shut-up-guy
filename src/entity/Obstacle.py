@@ -4,8 +4,8 @@ from os.path import join
 
 import pygame.sprite
 
-from src.config import IMAGES, SCREEN_WIDTH
-from src.utils import Timer
+from config import IMAGES, SCREEN_WIDTH
+from utils import Timer
 
 
 class Obstacle(pygame.sprite.Sprite):
