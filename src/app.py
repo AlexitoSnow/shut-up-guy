@@ -1,9 +1,10 @@
 import pygame
 from pygame.locals import *
 
-from config import *
-from entity import *
-from scene import MenuScene, GameplayScene
+from .config.constants import *
+from .config import Settings
+from .scene import MenuScene, GameplayScene, LevelsScene, GameOverScene
+from .utils import ResourceManager
 
 class Game:
     def __init__(self):
@@ -13,22 +14,28 @@ class Game:
 
         self.clock = pygame.time.Clock()
         self.running = True
-        self.settings = Settings()
 
+        self.settings = Settings()
+        self.resources = ResourceManager()
+
+        # Guarda las clases, no las instancias
         self.scenes = {
-            'menu': MenuScene(self),
-            'game': GameplayScene(self),
+            'menu': MenuScene,
+            'game': GameplayScene,
+            'levels': LevelsScene,
+            'gameover': GameOverScene,
         }
 
-        self.current_scene = self.scenes['menu']
+        self.current_scene = None
 
 
-    def change_scene(self,  scene_name):
+    def change_scene(self, scene_name, **kwargs):
         if scene_name in self.scenes:
-            self.current_scene = self.scenes[scene_name]
-            self.current_scene.init()
+            # Instancia la escena bajo demanda
+            self.current_scene = self.scenes[scene_name](self, **kwargs)
 
     def run(self):
+        self.change_scene('menu')
         while self.running:
             events = pygame.event.get()
             self.current_scene.handle_events(events)
@@ -41,7 +48,3 @@ class Game:
                 if event.type == QUIT:
                     self.running = False
         pygame.quit()
-
-
-if __name__ == "__main__":
-    Game().run()
