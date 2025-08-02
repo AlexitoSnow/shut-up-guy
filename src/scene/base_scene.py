@@ -1,5 +1,5 @@
 class Scene:
-    def __init__(self, game):
+    def __init__(self, game, **kwargs):
         self.game = game
 
     def handle_events(self, events):
