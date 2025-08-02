@@ -6,5 +6,6 @@
         "dynamic",
         "both"
     ],
-    "select_controls": "standard"
+    "select_controls": "standard",
+    "camera_index": 0
 }

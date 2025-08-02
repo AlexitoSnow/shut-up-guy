@@ -5,8 +5,6 @@ import json
 import os
 from os.path import join, dirname, abspath
 
-from config import DATA
-
 class Settings:
     def __init__(self):
         # Crear ruta absoluta para el archivo de configuración
