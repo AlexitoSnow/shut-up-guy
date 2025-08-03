@@ -25,7 +25,7 @@ class GameplayScene(Scene):
         # Groups
         self.character = pygame.sprite.GroupSingle()
         self.obstacles = pygame.sprite.Group()
-        self.killed_enemies = pygame.sprite.Group()
+        self.killed_enemies = 0
 
         # Timers
         self.level = kwargs.get('level')
@@ -92,16 +92,23 @@ class GameplayScene(Scene):
             if self.timer.get_time_in_seconds() == self.level.time:
                 self.game.change_scene('gameover', level=self.level, results=self.get_results())
                 self.character.sprite.release()
-        if self.level.bullet_count - self.character.sprite.shots_fired <= 0 and self.level.bullet_count != -1:
-            self.game.change_scene('gameover', level=self.level, results=self.get_results())
+
+            # Verificar si nos quedamos sin balas y no hay proyectiles activos
+            no_bullets_left = (self.level.bullet_count - self.character.sprite.shots_fired <= 0
+                               and self.level.bullet_count != -1)
+            no_active_projectiles = len(self.character.sprite.projectile_group) == 0
+
+            if no_bullets_left and no_active_projectiles:
+                self.game.change_scene('gameover', level=self.level, results=self.get_results())
+
+            if self.level.enemy_count == self.killed_enemies:
+                self.game.change_scene('gameover', level=self.level, results=self.get_results())
 
     def get_results(self):
         return {
-            'level': self.level,
             'time_remaining': self.timer.get_time_in_seconds(),
-            'shots_fired': self.character.sprite.shots_fired,
-            'bullet_count': self.character.sprite.bullet_count,
-            'killed_enemies': len(self.killed_enemies)
+            'shoots_remaining': self.level.bullet_count - self.character.sprite.shots_fired if self.level.bullet_count != -1 else -1,
+            'killed_enemies': self.killed_enemies
         }
 
     def on_pause(self):
@@ -219,8 +226,4 @@ class GameplayScene(Scene):
 
     def on_enemy_killed(self):
         self.update_bullet_remaining()
-        # Agregar enemigos al grupo killed_enemies antes de que sean eliminados
-        for enemy in self.obstacles:
-            # Si el enemigo está muerto pero aún no ha sido contado
-            if not enemy.alive() and enemy not in self.killed_enemies:
-                self.killed_enemies.add(enemy)
+        self.killed_enemies += 1
