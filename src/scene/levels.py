@@ -1,8 +1,9 @@
 import random
+from math import ceil
 
 import pygame
 
-from src.config import LEVEL_MAX, SCREEN_WIDTH, WHITE
+from src.config import LEVEL_MAX, SCREEN_WIDTH, WHITE, YELLOW
 from src.scene import Scene
 from src.utils import Button, Text
 
@@ -25,7 +26,7 @@ class LevelsScene(Scene):
 
         # Título usando la clase Text
         self.title = Text("NIVELES", 48, (SCREEN_WIDTH // 2, 50))
-        self.back_button = Button('<', (50, 50), 48, text_color=(255, 255, 0))
+        self.back_button = Button('<', (50, 50), 48, text_color=YELLOW)
         self.levels = []
         for i in range(1, LEVEL_MAX + 1):
             self.levels.append(Level(i, self.game.settings.difficulty))
@@ -36,7 +37,7 @@ class LevelsScene(Scene):
                 str(level.number),
                 rect.center,
                 36,
-                bg_color=WHITE,
+                bg_color=YELLOW if self.game.progress.level_exists(level.number) else WHITE,
                 text_color=(0, 0, 0)
             )
             self.level_buttons.append((button, level))
@@ -104,7 +105,7 @@ class Level:
         if difficulty == 'easy':
             self.bullet_count = -1  # infinite bullets
         elif difficulty == 'medium':
-            self.bullet_count = self.enemy_count * 1.5  # 1.5 bullets per enemy
+            self.bullet_count = ceil(self.enemy_count * 1.5)  # 1.5 bullets per enemy
         else:
             self.bullet_count = self.enemy_count  # 1 bullet per enemy
 
