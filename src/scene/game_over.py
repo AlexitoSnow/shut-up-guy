@@ -4,12 +4,13 @@
 import pygame
 
 from .base_scene import Scene
-from ..config import WHITE
+from .levels import Level
+from ..config import SCREEN_WIDTH, SCREEN_HEIGHT
 from ..utils import Button, Text
 
 
 class GameOverScene(Scene):
-    def __init__(self, game, level=None, results=None):
+    def __init__(self, game, level: Level=None, results=None):
         super().__init__(game)
         self.game = game
         self.level = level
@@ -17,26 +18,26 @@ class GameOverScene(Scene):
 
         # Calcular score y estado de victoria
         self.score = self.calculate_score()
-        self.victory = self.results['killed_enemies'] >= self.level.enemy_count
+        self.victory = self.results['killed_enemies'] == self.level.enemy_count
 
         # Preparar textos
         title_text = "¡VICTORIA!" if self.victory else "GAME OVER"
-        self.title = Text(title_text, 48, (game.screen.get_width() // 2, 150))
+        self.title = Text(title_text, 48, (SCREEN_WIDTH // 2, 150))
 
         # Crear textos de resultados
         score_text = f"Score: {self.score}"
-        time_text = f"Tiempo restante: {self.results['time_remaining']} segundos"
-        kills_text = f"Enemigos eliminados: {self.results['killed_enemies']}/{self.level.enemy_count}"
-        shots_text = f"Disparos realizados: {self.results['shots_fired']}"
+        kills_text = f"Enemigos eliminados: {self.results['killed_enemies']} x 100"
+        shoots_text = f"Disparos restantes: {self.results['shoots_remaining']} x 10"
+        time_text = f"Tiempo restante: {self.results['time_remaining']} segundos x 10"
 
         y_pos = 200
-        self.score_display = Text(score_text, 36, (game.screen.get_width() // 2, y_pos))
-        self.time_display = Text(time_text, 36, (game.screen.get_width() // 2, y_pos + 50))
-        self.kills_display = Text(kills_text, 36, (game.screen.get_width() // 2, y_pos + 100))
-        self.shots_display = Text(shots_text, 36, (game.screen.get_width() // 2, y_pos + 150))
+        self.score_display = Text(score_text, 30, (SCREEN_WIDTH // 2, y_pos))
+        self.time_display = Text(time_text, 30, (SCREEN_WIDTH // 2, y_pos + 50))
+        self.kills_display = Text(kills_text, 30, (SCREEN_WIDTH // 2, y_pos + 100))
+        self.shoots_display = Text(shoots_text, 30, (SCREEN_WIDTH // 2, y_pos + 150))
 
         # Botón de continuar
-        self.resume_button = Button("Continuar", (game.screen.get_width() // 2, y_pos + 250), 48, self.on_tap_quit)
+        self.resume_button = Button("Continuar", (SCREEN_WIDTH // 2, y_pos + 250), 48, self.on_tap_quit)
 
         # Fondo semi-transparente
         self.container_surf = pygame.Surface((600, 500))
@@ -46,19 +47,16 @@ class GameOverScene(Scene):
     def calculate_score(self):
         # Base score por enemigos eliminados
         kill_score = self.results['killed_enemies'] * 100
-
         # Bonus por tiempo restante
         time_bonus = self.results['time_remaining'] * 10
-
-        # Penalización por disparos usados (si no son infinitos)
-        shot_penalty = 0
-        if self.results['bullet_count'] != -1:
-            shot_penalty = self.results['shots_fired'] * 5
+        # Bonus por disparos restantes
+        shoot_bonus = 0 if self.level.bullet_count == -1 else self.results['shoots_remaining'] * 10
 
         # Score final
-        return max(0, kill_score + time_bonus - shot_penalty)
+        return kill_score + time_bonus + shoot_bonus
 
     def on_tap_quit(self):
+        if self.victory: self.game.progress.add_level({'number': self.level.number, f'{self.level.difficulty}': self.score})
         self.game.change_scene('levels')
 
     def update(self):
@@ -72,14 +70,14 @@ class GameOverScene(Scene):
 
     def draw(self, screen):
         # Dibujar fondo semi-transparente
-        screen.blit(self.container_surf, (screen.get_width() // 2 - 300, screen.get_height() // 2 - 250))
+        screen.blit(self.container_surf, (SCREEN_WIDTH // 2 - 300, SCREEN_HEIGHT // 2 - 250))
 
         # Dibujar todos los textos
         screen.blit(self.title.surf(), self.title.rect)
-        screen.blit(self.score_display.surf(), self.score_display.rect)
         screen.blit(self.time_display.surf(), self.time_display.rect)
         screen.blit(self.kills_display.surf(), self.kills_display.rect)
-        screen.blit(self.shots_display.surf(), self.shots_display.rect)
+        if self.level.bullet_count != -1: screen.blit(self.shoots_display.surf(), self.shoots_display.rect)
+        screen.blit(self.score_display.surf(), self.score_display.rect)
 
         # Dibujar botón
         self.resume_button.draw(screen)
