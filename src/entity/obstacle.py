@@ -1,15 +1,29 @@
-import time
+from os.path import join
 from random import randint, choice, random
 
 import pygame.sprite
 
-from ..config.constants import SCREEN_WIDTH, ENTITY_SIZE, ORIGINAL_ENTITY_SIZE
+from ..config.constants import SCREEN_WIDTH, ENTITY_SIZE, ORIGINAL_ENTITY_SIZE, SOUNDS
 from src.utils import Timer
 from src.utils.resource_manager import ResourceManager
 
 class Obstacle(pygame.sprite.Sprite):
     def __init__(self, resources: ResourceManager, lifetime=5000, movement_speed=5):
         super().__init__()
+
+        # Cargar sonidos de risa
+        self.laugh_sounds = [
+            pygame.mixer.Sound(join(SOUNDS, 'child_laugh_1.mp3')),
+            pygame.mixer.Sound(join(SOUNDS, 'child_laugh_2.mp3'))
+        ]
+
+        self.kill_sound = pygame.mixer.Sound(join(SOUNDS, 'child_dying.mp3'))
+
+        # Ajustar volumen de las risas
+        for sound in self.laugh_sounds:
+            sound.set_volume(0.4)
+
+        self.kill_sound.set_volume(0.4)
 
         # Posiciones posibles en Y
         self.POSITIONS_Y = [100, 200]
@@ -61,6 +75,10 @@ class Obstacle(pygame.sprite.Sprite):
 
         self.lifetime = Timer(lifetime, autostart=True, func=self.kill)
 
+    def play_random_laugh(self):
+        if random() < 0.5:  # 50% de probabilidad de reír
+            choice(self.laugh_sounds).play()
+
     def animation_state(self):
         self.animation_index = (self.animation_index + self.animation_speed) % self.frames_count
         self.frames = self.moving_right if self.direction == 1 else self.moving_left
@@ -100,3 +118,7 @@ class Obstacle(pygame.sprite.Sprite):
         self.movement()
         self.animation_state()
         self.lifetime.update()
+
+    def kill(self):
+        self.kill_sound.play()
+        super().kill()

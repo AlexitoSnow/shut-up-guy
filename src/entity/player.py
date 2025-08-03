@@ -1,7 +1,8 @@
 import pygame
 from pygame.locals import *
+from os.path import join
 
-from ..config.constants import GROUND, SCREEN_WIDTH, ENTITY_SIZE, ORIGINAL_ENTITY_SIZE
+from ..config.constants import GROUND, SCREEN_WIDTH, ENTITY_SIZE, ORIGINAL_ENTITY_SIZE, SOUNDS
 from .projectile import Projectile
 from ..utils.resource_manager import ResourceManager
 
@@ -10,6 +11,17 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, resource_manager: ResourceManager, game, camera_input_handler=None, bullet_count=-1, current_level=1):
         super().__init__()
         self.game = game
+
+        # Cargar sonidos
+        self.walking_sound = pygame.mixer.Sound(join(SOUNDS, 'walking.mp3'))
+        self.shooting_sound = pygame.mixer.Sound(join(SOUNDS, 'shooting.mp3'))
+
+        # Ajustar volumen (opcional)
+        self.walking_sound.set_volume(0.5)
+        self.shooting_sound.set_volume(0.5)
+
+        # Variable para controlar el sonido de caminar
+        self.is_walking_sound_playing = False
 
         # Cargar spritesheets y recortar frames usando tamaño original
         width, height = ORIGINAL_ENTITY_SIZE
@@ -139,8 +151,16 @@ class Player(pygame.sprite.Sprite):
             self.direction = direction
             self.is_moving = True
             self.rect.x += 5 * self.direction
+            # Reproducir sonido de caminar si no está sonando
+            if not self.is_walking_sound_playing:
+                self.walking_sound.play(-1)  # -1 para loop continuo
+                self.is_walking_sound_playing = True
         else:
             self.is_moving = False
+            # Detener sonido de caminar
+            if self.is_walking_sound_playing:
+                self.walking_sound.stop()
+                self.is_walking_sound_playing = False
 
         if self.rect.right > SCREEN_WIDTH: self.rect.right = SCREEN_WIDTH
         if self.rect.left < 0: self.rect.left = 0
@@ -160,8 +180,13 @@ class Player(pygame.sprite.Sprite):
                     self.shots_fired += 1
                 self.is_shooting = True
                 self.shooting_frame_count = 0  # Reiniciar el contador al disparar
+                # Reproducir sonido de disparo
+                self.shooting_sound.play()
 
     def update(self):
         self.player_input()
         self.animate()
         self.shoot_timer()
+
+    def release(self):
+        self.walking_sound.stop()

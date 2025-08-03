@@ -1,8 +1,6 @@
 # Escena principal del juego
 # Contiene la lógica principal del gameplay:
 # spawning de enemigos, manejo de colisiones, puntuación, etc.
-from os.path import join
-from random import choice
 from math import ceil
 
 import pygame
@@ -93,6 +91,7 @@ class GameplayScene(Scene):
         if not self.pause:
             if self.timer.get_time_in_seconds() == self.level.time:
                 self.game.change_scene('gameover', level=self.level, results=self.get_results())
+                self.character.sprite.release()
         if self.level.bullet_count - self.character.sprite.shots_fired <= 0 and self.level.bullet_count != -1:
             self.game.change_scene('gameover', level=self.level, results=self.get_results())
 
