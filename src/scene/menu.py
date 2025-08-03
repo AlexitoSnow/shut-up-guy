@@ -4,7 +4,7 @@
 import pygame
 
 from .base_scene import Scene
-from ..config import SCREEN_WIDTH, SCREEN_HEIGHT, ORIGINAL_ENTITY_SIZE, ENTITY_SIZE
+from ..config import SCREEN_WIDTH, SCREEN_HEIGHT, ORIGINAL_ENTITY_SIZE, ENTITY_SIZE, WHITE
 from ..utils import Button, Text
 
 
@@ -17,8 +17,9 @@ class MenuScene(Scene):
         self.background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
         # Título
-        self.title = Text("Shut Up Guy", 48, (self.game.screen.get_width() // 2, 150))
-        self.play_button = Button('¡JUGAR!', (self.game.screen.get_width() // 2, 300), 48, text_color=(255, 255, 0))
+        self.title = Text("Shut Up Guy", 48, (SCREEN_WIDTH // 2, 150))
+        self.play_button = Button('¡JUGAR!', (SCREEN_WIDTH // 2, 300), 48, text_color=(255, 255, 0), bg_color=WHITE)
+        self.difficulty = Button(str(game.settings.difficulty).upper(), (SCREEN_WIDTH // 2, 50), 30, text_color=(255, 255, 0), bg_color=WHITE)
 
         # Control icon y su configuración
         self.control_frames = []
@@ -63,6 +64,9 @@ class MenuScene(Scene):
                 if self.play_button.rect.collidepoint(mouse_pos):
                     self.game.change_scene('levels')
                     pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+                elif self.difficulty.rect.collidepoint(mouse_pos):
+                    self.toggle_difficulty()
+                    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
                 elif self.control_rect.collidepoint(mouse_pos):
                     self.cycle_control_mode()
 
@@ -88,9 +92,21 @@ class MenuScene(Scene):
         screen.blit(self.background, (0, 0))
         screen.blit(self.title.surf(), self.title.rect)
         self.play_button.draw(screen)
+        self.difficulty.draw(screen)
         screen.blit(self.control_frames[self.control_index], self.control_rect)
         screen.blit(self.teacher, self.teacher_rect)
 
     def update(self):
         self.teacher_index = (self.teacher_index + 0.1) % 3
         self.teacher = self.player_frames[int(self.teacher_index)]
+
+    def toggle_difficulty(self):
+        # Cambiar dificultad
+        if self.game.settings.difficulty == 'easy':
+            self.game.settings.difficulty = 'medium'
+        elif self.game.settings.difficulty == 'medium':
+            self.game.settings.difficulty = 'hard'
+        else:
+            self.game.settings.difficulty = 'easy'
+        self.game.settings.save_settings()
+        self.difficulty = Button(str(self.game.settings.difficulty).upper(), (SCREEN_WIDTH // 2, 50), 30, text_color=(255, 255, 0), bg_color=WHITE)
