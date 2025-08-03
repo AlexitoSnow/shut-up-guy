@@ -18,6 +18,7 @@ GROUND = 500
 FPS = 60
 
 WHITE = (255, 255, 255)
+YELLOW = (255, 255, 0)
 BLACK = (0, 0, 0)
 
 # Rutas absolutas para los recursos
