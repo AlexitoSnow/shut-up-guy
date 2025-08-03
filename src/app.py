@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 
 from .config.constants import *
-from .config import Settings
+from .config import Settings, Progress
 from .scene import MenuScene, GameplayScene, LevelsScene, GameOverScene
 from .utils import ResourceManager
 
@@ -17,6 +17,7 @@ class Game:
 
         self.settings = Settings()
         self.resources = ResourceManager()
+        self.progress = Progress()
 
         # Guarda las clases, no las instancias
         self.scenes = {
