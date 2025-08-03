@@ -2,7 +2,7 @@ import random
 
 import pygame
 
-from src.config import LEVEL_MAX
+from src.config import LEVEL_MAX, SCREEN_WIDTH, WHITE
 from src.scene import Scene
 from src.utils import Button, Text
 
@@ -24,12 +24,11 @@ class LevelsScene(Scene):
         self.game = game
 
         # Título usando la clase Text
-        self.title = Text("NIVELES", 48, (game.screen.get_width() // 2, 50))
-        self.back_button = Button('<- Back', (100, 50), 48, text_color=(255, 255, 0))
+        self.title = Text("NIVELES", 48, (SCREEN_WIDTH // 2, 50))
+        self.back_button = Button('<', (50, 50), 48, text_color=(255, 255, 0))
         self.levels = []
         for i in range(1, LEVEL_MAX + 1):
-            difficulty = 0
-            self.levels.append(Level(i, difficulty))
+            self.levels.append(Level(i, self.game.settings.difficulty))
         self.level_buttons = []
         for i, level in enumerate(self.levels):
             rect = get_button_rect(i, 50, 100)
@@ -37,7 +36,7 @@ class LevelsScene(Scene):
                 str(level.number),
                 rect.center,
                 36,
-                bg_color=(255, 255, 255),
+                bg_color=WHITE,
                 text_color=(0, 0, 0)
             )
             self.level_buttons.append((button, level))
@@ -64,7 +63,7 @@ class LevelsScene(Scene):
         self.back_button.draw(screen)
 
 class Level:
-    def __init__(self, number, difficulty):
+    def __init__(self, number, difficulty: str):
         """
         Initializes a level with:
         - enemy_count y time que se reinician cada 5 niveles
@@ -102,9 +101,9 @@ class Level:
         self.spawn_interval = available_time / self.enemy_count  # distribuir uniformemente
 
         # Cantidad de balas según dificultad
-        if difficulty == 0:
+        if difficulty == 'easy':
             self.bullet_count = -1  # infinite bullets
-        elif difficulty == 1:
+        elif difficulty == 'medium':
             self.bullet_count = self.enemy_count * 1.5  # 1.5 bullets per enemy
         else:
             self.bullet_count = self.enemy_count  # 1 bullet per enemy
