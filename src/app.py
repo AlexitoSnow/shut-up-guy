@@ -9,8 +9,14 @@ from .utils import ResourceManager
 class Game:
     def __init__(self):
         pygame.init()
+        pygame.mixer.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption(APP_NAME)
+
+        # Inicializar y reproducir música de fondo
+        pygame.mixer.music.load('assets/sounds/background.mp3')
+        pygame.mixer.music.set_volume(0.5)
+        pygame.mixer.music.play(-1)  # -1 significa reproducción infinita
 
         self.clock = pygame.time.Clock()
         self.running = True
