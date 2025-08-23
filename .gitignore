@@ -26,7 +26,6 @@ wheels/
 
 # IDEs and editors
 .idea/
-.vscode/
 *.swp
 *.swo
 *.swn

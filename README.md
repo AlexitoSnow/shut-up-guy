@@ -75,6 +75,8 @@ pip install -r requirements.txt
 python main.py
 ```
 
+Alternativamente, si usas VSCode, hay una configuración de depuración lista para usar en el archivo `.vscode/launch.json`, que puedes utilizar para ejecutar presionando F5.
+
 ## Instrucciones de Juego
 
 ### Objetivo
